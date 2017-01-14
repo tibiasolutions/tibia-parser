@@ -1,0 +1,29 @@
+{
+    "name": "tibiasolutions/tibia-parser",
+    "description": "Tibia.com parser informations",
+    "homepage": "https://github.com/tibiasolutions/tibia-parser",
+    "type": "library",
+    "license": "MIT",
+	"authors": [
+        {
+            "name": "Bruno Minervino",
+            "email": "bruno@tibia.solutions"
+        },
+        {
+            "name": "Tibia Solutions",
+            "homepage": "http://tibia.solutions"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "symfony/dom-crawler": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "TibiaParser\\": "src"
+        },
+        "files": [
+            "src/Parser/player.php"
+        ]
+    }
+}
