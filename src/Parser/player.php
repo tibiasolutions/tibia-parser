@@ -26,7 +26,7 @@ class Tibia
 		if (stripos($html, "<b>Could not find character</b>") !== false) {
 			$player['exists'] = false;
 			return $player;
-        } else {
+        	} else {
 			$crawler = new Crawler();
 			$crawler->addHtmlContent($html);
 
