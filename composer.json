@@ -8,10 +8,6 @@
         {
             "name": "Bruno Minervino",
             "email": "bruno@tibia.solutions"
-        },
-        {
-            "name": "Tibia Solutions",
-            "homepage": "http://tibia.solutions"
         }
     ],
     "require": {
@@ -23,7 +19,8 @@
             "TibiaParser\\": "src"
         },
         "files": [
-            "src/Parser/player.php"
+			"src/player.php",
+			"src/world.php"
         ]
     }
 }
