@@ -1,4 +1,8 @@
 # Tibia Parser
+
+[![Total Downloads](https://img.shields.io/packagist/dt/tibiasolutions/tibia-parser.svg?style=flat-square)](https://packagist.org/packages/tibiasolutions/tibia-parser)
+[![License](https://img.shields.io/packagist/l/tibiasolutions/tibia-parser.svg?style=flat-square)](https://packagist.org/packages/tibiasolutions/tibia-parser)
+
 A PHP crawler module to get tibia.com parsed data.  
 
 ## Installation
@@ -15,17 +19,29 @@ composer require tibiasolutions/tibia-parser
 ```
 
 ## Basic Usage
+
+### Player
 ```php
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use TibiaParser\Parser\Tibia;
+use TibiaParser\Player;
 
-$tibia = new Tibia();
-$player = $tibia->getPlayer('Burchan');
-if ($player['exists']) {
+$player = new Player('Kharsek');
+if ($player->exists) {
 	var_dump($player);
 } else {
 	echo 'Character does not exist.';
 }
+```
 
+### World
+```php
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+use TibiaParser\World;
+
+$world = new World('Antica');
+foreach ($world->players as $player) {
+	var_dump($player["name"] . ' - ' . $player["level"]);
+}
 ```
