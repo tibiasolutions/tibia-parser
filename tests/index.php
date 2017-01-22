@@ -21,3 +21,6 @@ if ($world->error != NULL) {
 		var_dump($player);
 	}
 }
+
+// Get all World Names
+var_dump(World::getWorlds());

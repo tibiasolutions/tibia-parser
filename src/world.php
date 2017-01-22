@@ -1,7 +1,7 @@
 <?php
 /**
  * Tibia Parser - Tibia.com parser informations
- * Copyright (c) Tibia Solutions (http://tibia.solutions)
+ * Copyright (c) 2017 Tibia Solutions (http://tibia.solutions)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
@@ -18,15 +18,17 @@ use Symfony\Component\DomCrawler\Crawler;
 class World
 {
     private $world = [ "error" => NULL ];
-    
-    function __construct($world_name) {
-        $html = file_get_contents("https://secure.tibia.com/community/?subtopic=worlds&world=" . $world_name);
+
+	function __construct($world_name) {
+		$url = sprintf("https://secure.tibia.com/community/?subtopic=worlds&world=%s", $world_name);
+		$html = file_get_contents($url);
+
 		if (stripos($html, "World with this name doesn't exist!") !== false) {
 			$this->world["error"] = "World with this name doesn't exist!";
 		} else {
 			$crawler = new Crawler();
 			$crawler->addHtmlContent($html);
-			
+
 			$information = [ ];
 			$info = $crawler->filterXPath('//div[@class="BoxContent"]/div[@class="TableContainer"][1]/table/tr/td/div[@class="InnerTableContainer"]/table/tr');
 			foreach ($info as $row) {
@@ -38,7 +40,7 @@ class World
 					$explode = explode(" players (on ", $value);
 					$record["players"] = (int)$explode[0];
 					$record["date"] = str_replace(")", "", $explode[1]);
-			
+
 					$information[$key] = $record;
 				} else if ($key === "world_quest_titles") {
 					$quests = explode(", ", $value);
@@ -47,9 +49,9 @@ class World
 					$information[$key] = ctype_digit($value) ? (int)$value : $value;
 				}
 			}
-			
+
 			$this->world["information"] = $information;
-			
+
 			$players = [ ];
 			$online = $crawler->filterXPath('//div[@class="BoxContent"]/div[@class="TableContainer"][2]/table/tr/td/div[@class="InnerTableContainer"]/table/tr[position() > 1]');
 			foreach ($online as $row) {
@@ -62,20 +64,35 @@ class World
 					"vocation" => $vocation
 				];
 			}
-			
+
 			$this->world["players"] = $players;
-			
+
 		}
-    }
-    
+	}
+
+	public static function getWorlds() {
+		$url = "https://secure.tibia.com/community/?subtopic=worlds";
+		$html = file_get_contents($url);
+		$crawler = new Crawler();
+		$crawler->addHtmlContent($html);
+		$worlds = [ ];
+
+		$content = $crawler->filterXPath('//div[@class="TableContentContainer"][2]/table/tr[position() > 1]');
+		foreach ($content as $row) {
+			$worlds[] = $row->firstChild->nodeValue;
+		}
+
+		return $worlds;
+	}
+
     public function __get($key) {
         return $this->world[$key];
     }
-    
+
     public function __set($key, $value) {
         $this->world[$key] = $value;
     }
-    
+
     public function __toString() {
         return json_encode($this->player);
     }
