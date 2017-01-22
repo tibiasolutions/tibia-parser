@@ -13,6 +13,11 @@ if ($player->exists) {
 
 // Get Players online on Antica
 $world = new World('Antica');
-foreach ($world->players as $player) {
-    var_dump($player["name"] . ' - ' . $player["level"]);
+if ($world->error != NULL) {
+	echo $world->error;
+} else {
+	var_dump($world->information);
+	foreach ($world->players as $player) {
+		var_dump($player);
+	}
 }

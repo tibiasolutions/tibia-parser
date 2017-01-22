@@ -17,28 +17,28 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class Player
 {
-    private $player = [ 'exists' => true ];
+    private $player = [ "exists" => true ];
     
     function __construct($name) {
-        $name = str_replace(' ', '+', $name);
-        $html = file_get_contents('https://secure.tibia.com/community/?subtopic=characters&name=' . $name);
+        $name = str_replace(" ", "+", $name);
+        $html = file_get_contents("https://secure.tibia.com/community/?subtopic=characters&name=" . $name);
         if (stripos($html, "<b>Could not find character</b>") !== false) {
-            $this->player['exists'] = false;
+            $this->player["exists"] = false;
         } else {
             $crawler = new Crawler();
             $crawler->addHtmlContent($html);
     
             $info = $crawler->filterXPath('//div[@class="BoxContent"]/table[1]/tr[position() > 1]');
             foreach ($info as $row) {
-                $key  = strtolower(str_replace(' ', '_', str_replace(':', '', trim($row->firstChild->nodeValue))));
+                $key  = strtolower(str_replace(" ", "_", str_replace(":", "", trim($row->firstChild->nodeValue))));
                 $value = trim($row->lastChild->nodeValue);
     
-                if (strpos($key, 'guild') !== false) {
-                    $this->player['guild'] = $value;
-                } else if (strpos($key, 'status') !== false) {
-                    $this->player['account_status'] = $value;
+                if (strpos($key, "guild") !== false) {
+                    $this->player["guild"] = $value;
+                } else if (strpos($key, "status") !== false) {
+                    $this->player["account_status"] = $value;
                 } else {
-                    $this->player[$key] = $value;
+                    $this->player[$key] = ctype_digit($value) ? (int)$value : $value;
                 }
             }
     
@@ -47,7 +47,7 @@ class Player
                 $house_explode = explode(" (", $explode[0]);
                 $this->player["house"] = [
                     "name"  =>  $house_explode[0],
-                    "city"  =>  str_replace(')', '', $house_explode[1])
+                    "city"  =>  str_replace(")", "", $house_explode[1])
                 ];
             }
     
@@ -62,20 +62,20 @@ class Player
             $achievs = $crawler->filterXPath('//b[text()="Account Achievements"]/ancestor::table[1]//tr[position() > 1]');
     
             $achievements = [];
-            if (trim($achievs->text()) !== 'There are no achievements set to be displayed for this character.') {
+            if (trim($achievs->text()) !== "There are no achievements set to be displayed for this character.") {
                 foreach ($achievs as $row) {
                     $stars = new Crawler($row->firstChild);
-                    $stars = $stars->filterXPath('//img');
+                    $stars = $stars->filterXPath("//img");
                     $stars = $stars->count();
                     $value = trim($row->lastChild->nodeValue);
                     $secret = new Crawler($row->lastChild);
-                    $secret = $secret->filterXPath('//img');
+                    $secret = $secret->filterXPath("//img");
                     $secret = $secret->count() > 0;
     
                     $achievements[] = [
-                        'stars' => $stars,
-                        'description' => $value,
-                        'secret' => $secret
+                        "stars" => $stars,
+                        "description" => $value,
+                        "secret" => $secret
                     ];
                 }
             }
@@ -95,27 +95,27 @@ class Player
                     $killers = [];
                     $assistants = [];
                     
-                    $assisted = explode('.Assisted by ', $matches[2]);
+                    $assisted = explode(".Assisted by ", $matches[2]);
     
                     if (count($assisted) > 1) {
-                        $k1 = explode(' and ', $assisted[0]);
-                        $k = explode(', ', $k1[0]);
+                        $k1 = explode(" and ", $assisted[0]);
+                        $k = explode(", ", $k1[0]);
     
                         if (count($k1) > 1)
                             array_push($k, $k1[1]);
     
                         $killers[] = $k;
     
-                        $a1 = explode(' and ', $assisted[1]);
-                        $a = explode(', ', $a1[0]);
+                        $a1 = explode(" and ", $assisted[1]);
+                        $a = explode(", ", $a1[0]);
     
                         if (count($a1) > 1)
                             array_push($a, $a1[1]);
     
                         $assistants[] = $a;
                     } else {
-                        $k1 = explode(' and ', $matches[2]);
-                        $k = explode(', ', $k1[0]);
+                        $k1 = explode(" and ", $matches[2]);
+                        $k = explode(", ", $k1[0]);
     
                         if (count($k1) > 1)
                             array_push($k, $k1[1]);
@@ -124,10 +124,10 @@ class Player
                     }
     
                     $deaths[] = [
-                        'date' => $date,
-                        'level' => $level,
-                        'killers' => $killers,
-                        'assistants' => $assistants
+                        "date" => $date,
+                        "level" => $level,
+                        "killers" => $killers,
+                        "assistants" => $assistants
                     ];
                 }
             }
