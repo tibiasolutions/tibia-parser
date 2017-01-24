@@ -39,7 +39,7 @@ class World
 					$record = [];
 					$explode = explode(" players (on ", $value);
 					$record["players"] = (int)$explode[0];
-					$record["date"] = str_replace(")", "", $explode[1]);
+					$record["date"] = Util::parseDate(str_replace(")", "", $explode[1]));
 
 					$information[$key] = $record;
 				} else if ($key === "world_quest_titles") {
