@@ -13,6 +13,7 @@
  */
 namespace TibiaParser;
 
+use TibiaParser\Util;
 use Symfony\Component\DomCrawler\Crawler;
 
 class Player
@@ -61,6 +62,10 @@ class Player
 				];
 			}
 
+			if (isset($this->player["last_login"])) {
+				$this->player["last_login"] = Util::parseDate($this->player["last_login"]);
+			}
+
 			$achievs = $crawler->filterXPath('//b[text()="Account Achievements"]/ancestor::table[1]//tr[position() > 1]');
 
 			$achievements = [];
@@ -88,7 +93,7 @@ class Player
 			$deaths = [];
 			if ($death->count() > 0) {
 				foreach ($death as $row) {
-					$date = trim($row->firstChild->nodeValue);
+					$date = Util::parseDate(trim($row->firstChild->nodeValue));
 					$value = trim($row->lastChild->nodeValue);
 
 					preg_match("/at Level (\\d+) by (.+)\\./", $value, $matches);

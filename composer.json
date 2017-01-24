@@ -12,7 +12,8 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "symfony/dom-crawler": "^3.2"
+        "symfony/dom-crawler": "^3.2",
+        "nesbot/carbon": "^1.22"
     },
     "autoload": {
         "psr-4": {
@@ -20,6 +21,7 @@
         },
         "files": [
 			"src/player.php",
+			"src/util.php",
 			"src/world.php"
         ]
     }
