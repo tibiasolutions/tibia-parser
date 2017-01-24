@@ -17,13 +17,13 @@ use Carbon\Carbon;
 
 class Util
 {
-	/* For some reason, Tibia uses non-breaking spaces (&nbsp;) on dates and
-	 * Carbon can't handle those, so we convert them to regular spaces here.
-	 */
-	static function parseDate($dateString) {
-		$dateString = htmlentities($dateString, null, 'utf-8');
-		$dateString = str_replace('&nbsp;', ' ', $dateString);
+    /* For some reason, Tibia uses non-breaking spaces (&nbsp;) on dates and
+     * Carbon can't handle those, so we convert them to regular spaces here.
+     */
+    static function parseDate($dateString) {
+        $dateString = htmlentities($dateString, null, 'utf-8');
+        $dateString = str_replace('&nbsp;', ' ', $dateString);
 
-		return Carbon::parse($dateString);
-	}
+        return Carbon::parse($dateString);
+    }
 }

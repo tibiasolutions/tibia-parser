@@ -19,71 +19,70 @@ class World
 {
     private $world = [ "error" => NULL ];
 
-	function __construct($world_name) {
-		$url = sprintf("https://secure.tibia.com/community/?subtopic=worlds&world=%s", $world_name);
-		$html = file_get_contents($url);
+    function __construct($world_name) {
+        $url = sprintf("https://secure.tibia.com/community/?subtopic=worlds&world=%s", $world_name);
+        $html = file_get_contents($url);
 
-		if (stripos($html, "World with this name doesn't exist!") !== false) {
-			$this->world["error"] = "World with this name doesn't exist!";
-		} else {
-			$crawler = new Crawler();
-			$crawler->addHtmlContent($html);
+        if (stripos($html, "World with this name doesn't exist!") !== false) {
+            $this->world["error"] = "World with this name doesn't exist!";
+        } else {
+            $crawler = new Crawler();
+            $crawler->addHtmlContent($html);
 
-			$information = [ ];
-			$info = $crawler->filterXPath('//div[@class="BoxContent"]/div[@class="TableContainer"][1]/table/tr/td/div[@class="InnerTableContainer"]/table/tr');
-			foreach ($info as $row) {
-				$key  = strtolower(str_replace(" ", "_", str_replace(":", "", trim($row->firstChild->nodeValue))));
-				$value = trim($row->lastChild->nodeValue);
+            $information = [ ];
+            $info = $crawler->filterXPath('//div[@class="BoxContent"]/div[@class="TableContainer"][1]/table/tr/td/div[@class="InnerTableContainer"]/table/tr');
+            foreach ($info as $row) {
+                $key  = strtolower(str_replace(" ", "_", str_replace(":", "", trim($row->firstChild->nodeValue))));
+                $value = trim($row->lastChild->nodeValue);
 
-				if ($key === "online_record") {
-					$record = [];
-					$explode = explode(" players (on ", $value);
-					$record["players"] = (int)$explode[0];
-					$record["date"] = Util::parseDate(str_replace(")", "", $explode[1]));
+                if ($key === "online_record") {
+                    $record = [];
+                    $explode = explode(" players (on ", $value);
+                    $record["players"] = (int)$explode[0];
+                    $record["date"] = Util::parseDate(str_replace(")", "", $explode[1]));
 
-					$information[$key] = $record;
-				} else if ($key === "world_quest_titles") {
-					$quests = explode(", ", $value);
-					$information[$key] = $quests;
-				} else {
-					$information[$key] = ctype_digit($value) ? (int)$value : $value;
-				}
-			}
+                    $information[$key] = $record;
+                } else if ($key === "world_quest_titles") {
+                    $quests = explode(", ", $value);
+                    $information[$key] = $quests;
+                } else {
+                    $information[$key] = ctype_digit($value) ? (int)$value : $value;
+                }
+            }
 
-			$this->world["information"] = $information;
+            $this->world["information"] = $information;
 
-			$players = [ ];
-			$online = $crawler->filterXPath('//div[@class="BoxContent"]/div[@class="TableContainer"][2]/table/tr/td/div[@class="InnerTableContainer"]/table/tr[position() > 1]');
-			foreach ($online as $row) {
-				$name = $row->childNodes[0]->nodeValue;
-				$level = (int)$row->childNodes[1]->nodeValue;
-				$vocation = $row->childNodes[2]->nodeValue;
-				$players[] = [
-					"name" => $name,
-					"level" => $level,
-					"vocation" => $vocation
-				];
-			}
+            $players = [ ];
+            $online = $crawler->filterXPath('//div[@class="BoxContent"]/div[@class="TableContainer"][2]/table/tr/td/div[@class="InnerTableContainer"]/table/tr[position() > 1]');
+            foreach ($online as $row) {
+                $name = $row->childNodes[0]->nodeValue;
+                $level = (int)$row->childNodes[1]->nodeValue;
+                $vocation = $row->childNodes[2]->nodeValue;
+                $players[] = [
+                    "name" => $name,
+                    "level" => $level,
+                    "vocation" => $vocation
+                ];
+            }
 
-			$this->world["players"] = $players;
+            $this->world["players"] = $players;
+        }
+    }
 
-		}
-	}
+    public static function getWorlds() {
+        $url = "https://secure.tibia.com/community/?subtopic=worlds";
+        $html = file_get_contents($url);
+        $crawler = new Crawler();
+        $crawler->addHtmlContent($html);
+        $worlds = [ ];
 
-	public static function getWorlds() {
-		$url = "https://secure.tibia.com/community/?subtopic=worlds";
-		$html = file_get_contents($url);
-		$crawler = new Crawler();
-		$crawler->addHtmlContent($html);
-		$worlds = [ ];
+        $content = $crawler->filterXPath('//div[@class="TableContentContainer"][2]/table/tr[position() > 1]');
+        foreach ($content as $row) {
+            $worlds[] = $row->firstChild->nodeValue;
+        }
 
-		$content = $crawler->filterXPath('//div[@class="TableContentContainer"][2]/table/tr[position() > 1]');
-		foreach ($content as $row) {
-			$worlds[] = $row->firstChild->nodeValue;
-		}
-
-		return $worlds;
-	}
+        return $worlds;
+    }
 
     public function __get($key) {
         return $this->world[$key];
