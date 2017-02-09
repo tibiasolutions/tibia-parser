@@ -45,6 +45,11 @@ class Player
                 }
             }
 
+            if (isset($this->player['name'])) {
+                $explode = explode(', will ', $this->player['name']);
+                $this->player['name'] = $explode[0];
+            }
+            
             if (isset($this->player["house"])) {
                 $explode = explode(" is paid until ", $this->player["house"]);
                 $house_explode = explode(" (", $explode[0]);
