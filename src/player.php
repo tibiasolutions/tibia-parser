@@ -45,9 +45,14 @@ class Player
                 }
             }
 
-            if (isset($this->player['name'])) {
-                $explode = explode(', will ', $this->player['name']);
-                $this->player['name'] = $explode[0];
+            if (isset($this->player["name"])) {
+                $explode = explode(", will ", $this->player["name"]);
+                $this->player["name"] = $explode[0];
+            }
+            
+            if (isset($this->player["former_names"])) {
+                $explode = explode(",", $this->player["former_names"]);
+                $this->player["former_names"] = array_map("trim", $explode);
             }
             
             if (isset($this->player["house"])) {
